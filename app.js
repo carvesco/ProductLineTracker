@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import buildRoutes from "./routes/build.route.js";
+import sessionRoutes from "./routes/session.route.js";
 const app = express();
 const port = 3000;
 
@@ -18,4 +19,8 @@ mongoose
     console.error("Error connecting to MongoDB:", err);
   });
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/builds", buildRoutes);
+app.use("/session", sessionRoutes);

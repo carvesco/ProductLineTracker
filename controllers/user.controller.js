@@ -27,3 +27,17 @@ export const validateLoginId = async (loginId) => {
     throw new Error(`Error finding user: ${error.message}`);
   }
 };
+
+export const endSession = async (loginId) => {
+  console.log("Ending session for user:", loginId);
+  try {
+    const user = await User.findOneAndUpdate(
+      { loginId },
+      { active_session: false },
+      { new: true }
+    );
+    return user;
+  } catch (error) {
+    throw new Error(`Error ending session: ${error.message}`);
+  }
+};
