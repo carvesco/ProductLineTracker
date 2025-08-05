@@ -1,10 +1,7 @@
 import express from "express";
-import mongoose from "mongoose";
-import Build from "../models/build.model.js";
 const router = express.Router();
+import { getBuild } from "../controllers/build.controller.js";
 
-router.get("/", (req, res) => {
-  res.send("Build route is working!");
-});
+router.get("/", getBuild);
 
 export default router;

@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const SessionSchema = new mongoose.Schema({
-  loginId: { type: mongoose.Types.ObjectId, ref: "User" },
-  buildNumber: { type: mongoose.Types.ObjectId, ref: "Build" },
+  loginId: { type: String, ref: "User" },
+  buildNumber: { type: Number, ref: "Build" },
   start_time: Date,
   end_time: Date,
   defects: Number,
