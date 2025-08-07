@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import buildRoutes from "./routes/build.route.js";
+import cors from "cors";
 import sessionRoutes from "./routes/session.route.js";
 const app = express();
 const port = 3000;
@@ -21,6 +22,7 @@ mongoose
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/builds", buildRoutes);
 app.use("/session", sessionRoutes);

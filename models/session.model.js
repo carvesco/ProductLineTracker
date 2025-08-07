@@ -37,7 +37,6 @@ SessionSchema.methods.endPause = function () {
 };
 
 SessionSchema.methods.getTimeLeft = function () {
-  console.log("Calculating time left for session");
   if (this.totalActiveTime === 0) {
     return this.processingTime - (new Date() - this.startTime);
   }

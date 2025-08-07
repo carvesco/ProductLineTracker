@@ -40,7 +40,7 @@ export const createSession = async (req, res) => {
 
 export const getSessionTimeLeft = async (req, res) => {
   try {
-    const { loginId, buildNumber } = req.body;
+    const { loginId, buildNumber } = req.query;
     if (!loginId || !buildNumber) {
       return res
         .status(400)
