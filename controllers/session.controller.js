@@ -10,7 +10,6 @@ export const createSession = async (req, res) => {
         .json({ msg: "loginId and buildNumber are required" });
     }
     let buildData = await getBuild(buildNumber);
-    console.log("Build Data:", buildData);
     if (!buildData) {
       return res.status(404).json({ msg: "Build not found" });
     }
@@ -21,7 +20,15 @@ export const createSession = async (req, res) => {
         buildData,
       });
     }
-    await Session.create(req.body);
+    console.log("Build Data:", buildData.numberOfParts);
+
+    let sessionData = {
+      loginId,
+      buildNumber,
+      isActive: false,
+      processingTime: buildData.numberOfParts * buildData.timePerPart * 1000, // Assuming processingTime is total time for all parts
+    };
+    await Session.create(sessionData);
     return res.status(200).json({
       msg: "Session created successfully",
       buildData,
@@ -31,9 +38,36 @@ export const createSession = async (req, res) => {
   }
 };
 
+export const getSessionTimeLeft = async (req, res) => {
+  try {
+    const { loginId, buildNumber } = req.body;
+    if (!loginId || !buildNumber) {
+      return res
+        .status(400)
+        .json({ msg: "loginId and buildNumber are required" });
+    }
+    const session = await Session.findOne({ loginId, buildNumber });
+    if (!session) {
+      return res.status(404).json({ msg: "Session not found" });
+    }
+    if (!session.isActive) {
+      return res.status(400).json({ msg: "Session is not active" });
+    }
+    const timeLeft = session.getTimeLeft();
+
+    res.status(200).json({
+      msg: "Time left for the session",
+      timeLeft,
+      session,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const startSession = async (req, res) => {
   try {
-    const { loginId, buildNumber, startTime } = req.body;
+    const { loginId, buildNumber } = req.body;
     if (!loginId || !buildNumber) {
       return res
         .status(400)
@@ -45,7 +79,8 @@ export const startSession = async (req, res) => {
     }
 
     // Update the start time from the request
-    session.startTime = startTime ? new Date(startTime) : new Date();
+    session.startTime = new Date();
+    session.lastStartTime = new Date(); // Set last start time to current time
     session.isActive = true;
     session.totalPausedTime = 0; // Reset paused time
     session.totalActiveTime = 0; // Reset active time
@@ -77,7 +112,7 @@ export const pauseSession = async (req, res) => {
     if (!session.isActive) {
       return res.status(400).json({ msg: "Session is not active" });
     }
-    if (session.isPaussed) {
+    if (session.isPaused) {
       return res.status(400).json({ msg: "Session is already paused" });
     }
 
@@ -109,7 +144,7 @@ export const resumeSession = async (req, res) => {
     if (!session.isActive) {
       return res.status(400).json({ msg: "Session is not active" });
     }
-    if (session.isPaussed === false) {
+    if (session.isPaused === false) {
       return res.status(400).json({ msg: "Session is not paused" });
     }
 
