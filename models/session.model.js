@@ -51,13 +51,6 @@ SessionSchema.methods.getTimeLeft = function () {
   return timeLeft;
 };
 
-// Method to end session
-SessionSchema.methods.endSession = function () {
-  this.isActive = false;
-  // calculate total active time
-  //calculate total inactive time
-};
-
 const Session = mongoose.model("Session", SessionSchema);
 
 export default Session;

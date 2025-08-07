@@ -185,7 +185,7 @@ export const finishSession = async (req, res) => {
       session.totalParts = totalParts || 0;
       session.submission = submission;
       session.defects = defects || 0;
-      session.endSession();
+      session.isActive = false;
       await session.save();
     }
 
