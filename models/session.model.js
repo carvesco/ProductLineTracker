@@ -59,6 +59,9 @@ SessionSchema.methods.getTimeLeft = function () {
     ); // Adjust for active time since last start
   }
   let timeLeft = this.processingTime - this.totalActiveTime;
+  if (timeLeft < 0) {
+    return this.totalActiveTime + new Date() - this.lastStartTime;
+  }
   return timeLeft;
 };
 
