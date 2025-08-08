@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 import buildRoutes from "./routes/build.route.js";
 import cors from "cors";
 import sessionRoutes from "./routes/session.route.js";
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 const port = 3000;
 
 mongoose
-  .connect(
-    "mongodb+srv://carvesco:eVKMjjmDe82SqzN1@productline.vpxncmg.mongodb.net/?retryWrites=true&w=majority&appName=ProductLine"
-  )
+  .connect(process.env.dbString)
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(port, () => {
