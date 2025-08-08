@@ -1,0 +1,9 @@
+[
+  { "buildNumber": 13, "numberOfParts": 54, "timePerPart": 3 },
+  { "buildNumber": 323, "numberOfParts": 21, "timePerPart": 23 },
+  { "buildNumber": 24, "numberOfParts": 232, "timePerPart": 43 },
+  { "buildNumber": 413, "numberOfParts": 21, "timePerPart": 29 },
+  { "buildNumber": 5432, "numberOfParts": 43, "timePerPart": 32 },
+  { "buildNumber": 122, "numberOfParts": 67, "timePerPart": 33 },
+  { "buildNumber": 564, "numberOfParts": 57, "timePerPart": 12 }
+]
