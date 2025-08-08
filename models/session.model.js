@@ -9,6 +9,7 @@ const SessionSchema = new mongoose.Schema({
   startTime: { type: Date, default: Date.now },
   endTime: Date,
   defects: { type: Number, default: 0 },
+  pauses: [{ pause: String }], // Array to hold pause details
   totalParts: { type: Number, default: 0 },
   submission: String,
   totalActiveTime: { type: Number, default: 0 }, // in milliseconds
@@ -30,12 +31,22 @@ SessionSchema.methods.endPause = function () {
   if (this.pauseStartTime) {
     const pauseDuration = new Date() - this.pauseStartTime;
     this.totalInactiveTime += pauseDuration; // Add pause duration to total inactive time
+    this.pauses.push({
+      pause: "Pauses at " + this.pauseStartTime + ", resumes at " + new Date(),
+    }); // Store pause time
     this.pauseStartTime = null;
     this.lastStartTime = new Date(); // Reset last start time to current time
     this.isPaused = false;
   }
 };
 
+SessionSchema.methods.exceededTime = function () {
+  this.pauses.push({
+    pause: "Exceeded time popup appeared at:" + new Date(),
+  });
+};
+
+// Method to get time left in the session
 SessionSchema.methods.getTimeLeft = function () {
   if (this.totalActiveTime === 0) {
     return this.processingTime - (new Date() - this.startTime);
@@ -50,6 +61,8 @@ SessionSchema.methods.getTimeLeft = function () {
   let timeLeft = this.processingTime - this.totalActiveTime;
   return timeLeft;
 };
+
+// Method to finish the session, calculate the total time active
 SessionSchema.methods.finishSession = function () {
   this.endTime = new Date();
   this.totalActiveTime += new Date() - this.lastStartTime;

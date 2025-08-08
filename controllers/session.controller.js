@@ -1,6 +1,23 @@
 import Session from "../models/session.model.js";
 import { getBuild } from "./build.controller.js";
 
+export const getActiveSession = async (req, res) => {
+  try {
+    const session = await Session.findOne({ isActive: true });
+    if (!session) {
+      return res.status(200).json({ msg: "No active session found" });
+    }
+    let buildData = await getBuild(session.buildNumber);
+    res.status(200).json({
+      msg: "Active session retrieved successfully",
+      session,
+      buildData,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const createSession = async (req, res) => {
   try {
     const { loginId, buildNumber } = req.body;
@@ -123,6 +140,34 @@ export const pauseSession = async (req, res) => {
       msg: "Session paused successfully",
       session,
       pauseStartTime: session.pauseStartTime,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const exceededTimeSession = async (req, res) => {
+  try {
+    const { loginId, buildNumber } = req.body;
+    if (!loginId || !buildNumber) {
+      return res
+        .status(400)
+        .json({ msg: "loginId and buildNumber are required" });
+    }
+    const session = await Session.findOne({ loginId, buildNumber });
+    if (!session) {
+      return res.status(404).json({ msg: "Session not found" });
+    }
+    if (!session.isActive) {
+      return res.status(400).json({ msg: "Session is not active" });
+    }
+
+    session.exceededTime();
+    await session.save();
+
+    res.status(200).json({
+      msg: "Session exceeded time ",
+      session,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
