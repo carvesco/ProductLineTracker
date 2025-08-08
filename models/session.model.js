@@ -50,6 +50,13 @@ SessionSchema.methods.getTimeLeft = function () {
   let timeLeft = this.processingTime - this.totalActiveTime;
   return timeLeft;
 };
+SessionSchema.methods.finishSession = function () {
+  this.endTime = new Date();
+  this.totalActiveTime += new Date() - this.lastStartTime;
+  this.isActive = false;
+  this.isPaused = false;
+  this.lastStartTime = null; // Reset last start time
+};
 
 const Session = mongoose.model("Session", SessionSchema);
 

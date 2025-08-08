@@ -176,20 +176,11 @@ export const finishSession = async (req, res) => {
     if (!session.isActive) {
       return res.status(400).json({ msg: "Session is not active" });
     }
-    if (submission) {
-      if (!totalParts || totalParts < 0) {
-        return res
-          .status(400)
-          .json({ msg: "totalParts must be a non-negative number" });
-      }
-      session.totalParts = totalParts || 0;
-      session.submission = submission;
-      session.defects = defects || 0;
-      session.isActive = false;
-      await session.save();
-    }
-
-    /* session.endSession(); */
+    session.totalParts = totalParts || 0;
+    session.submission = submission || false;
+    session.defects = defects || 0;
+    session.isActive = false;
+    session.finishSession();
     await session.save();
 
     res.status(200).json({
